@@ -220,18 +220,20 @@ pub struct Initialize<'info> {
         seeds=[b"instance".as_ref(), user.key.as_ref()],
         bump = instance_bump,
     )]
+    /// CHECK:
     instance: AccountInfo<'info>,
     #[account(
         init,
         payer = user,
         seeds=[b"wallet".as_ref(), user.key.as_ref(), mint.key().as_ref()],
-        bump = wallet_bump,
+        bump, // = wallet_bump,
         token::mint = mint,
         token::authority = instance,
     )]
     wallet: Account<'info, TokenAccount>,
     #[account(mut)]
     mint: Account<'info, Mint>,
+    #[account(mut)]
     user: Signer<'info>,
     system_program: Program<'info, System>,
     token_program: Program<'info, Token>,
@@ -315,14 +317,15 @@ pub struct InitializeNewGrant<'info> {
         init,
         payer = user_sending,
         seeds=[b"state".as_ref(), user_sending.key().as_ref(), user_receiving.key.as_ref(), mint_of_token_being_sent.key().as_ref(), application_idx.to_le_bytes().as_ref()],
-        bump = state_bump,
+        bump, // = state_bump,
+        space = 1024,
     )]
     application_state: Account<'info, State>,
     #[account(
         init,
         payer = user_sending,
         seeds=[b"wallet".as_ref(), user_sending.key().as_ref(), user_receiving.key.as_ref(), mint_of_token_being_sent.key().as_ref(), application_idx.to_le_bytes().as_ref()],
-        bump = wallet_bump,
+        bump, // = wallet_bump,
         token::mint=mint_of_token_being_sent,
         token::authority=application_state,
     )]
@@ -331,6 +334,7 @@ pub struct InitializeNewGrant<'info> {
     // Users and accounts in the system
     #[account(mut)]
     user_sending: Signer<'info>,                     // Alice
+    /// CHECK:
     user_receiving: AccountInfo<'info>,              // Bob
     mint_of_token_being_sent: Account<'info, Mint>,  // USDC
 
@@ -377,6 +381,7 @@ pub struct CompleteGrant<'info> {
 
     // Users and accounts in the system
     #[account(mut)]
+    /// CHECK:
     user_sending: AccountInfo<'info>,                     // Alice
     #[account(mut)]
     user_receiving: Signer<'info>,                        // Bob
@@ -410,6 +415,7 @@ pub struct PullBackInstruction<'info> {
     // Users and accounts in the system
     #[account(mut)]
     user_sending: Signer<'info>,
+    /// CHECK:
     user_receiving: AccountInfo<'info>,
     mint_of_token_being_sent: Account<'info, Mint>,
 
